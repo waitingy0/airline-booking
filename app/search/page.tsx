@@ -2,11 +2,7 @@
 
 import Link from "next/link";
 import { FormEvent, useMemo, useState } from "react";
-
-type AirportOption = {
-  code: string;
-  name: string;
-};
+import { airports, flightTemplates, type AirportCode,} from "@/lib/flightData";
 
 type ScheduleResult = {
   id: string;
@@ -34,14 +30,36 @@ type ScheduleResult = {
   isFull: boolean;
 };
 
-const airports: AirportOption[] = [
-  { code: "NZNE", name: "Dairy Flat Airport" },
-  { code: "YSSY", name: "Sydney Airport" },
-  { code: "NZRO", name: "Rotorua Airport" },
-  { code: "NZGB", name: "Claris Airport, Great Barrier Island" },
-  { code: "NZCI", name: "Tuuta Airport, Chatham Islands" },
-  { code: "NZTL", name: "Lake Tekapo Airport" },
-];
+// const airports: AirportOption[] = [
+//   { code: "NZNE", name: "Dairy Flat Airport" },
+//   { code: "YSSY", name: "Sydney Airport" },
+//   { code: "NZRO", name: "Rotorua Airport" },
+//   { code: "NZGB", name: "Claris Airport, Great Barrier Island" },
+//   { code: "NZCI", name: "Tuuta Airport, Chatham Islands" },
+//   { code: "NZTL", name: "Lake Tekapo Airport" },
+// ];
+
+const routeMap = flightTemplates.reduce<Partial<Record<AirportCode, AirportCode[]>>>(
+  (map, flight) => {
+    if (!map[flight.origin]) {
+      map[flight.origin] = [];
+    }
+
+    if (!map[flight.origin]?.includes(flight.destination)) {
+      map[flight.origin]?.push(flight.destination);
+    }
+
+    return map;
+  },
+  {}
+);
+
+const originOptions = Object.keys(routeMap) as AirportCode[];
+
+function getAirportLabel(code: string) {
+  const airport = airports[code as keyof typeof airports];
+  return airport ? `${airport.code} - ${airport.name}` : code;
+}
 
 function formatDateInput(date: Date) {
   return date.toISOString().slice(0, 10);
@@ -59,8 +77,28 @@ export default function SearchPage() {
     };
   }, []);
 
-  const [origin, setOrigin] = useState("NZNE");
-  const [destination, setDestination] = useState("YSSY");
+  const [origin, setOrigin] = useState<AirportCode>("NZNE");
+  const [destination, setDestination] = useState<AirportCode>("YSSY");
+  // const destinationOptions = routeMap[origin] || [];
+  const destinationOptions = useMemo<AirportCode[]>(() => {
+  return routeMap[origin] || [];
+  }, [origin]);
+
+  function handleOriginChange(nextOrigin: AirportCode) {
+  const nextDestinationOptions = routeMap[nextOrigin] || [];
+  const firstDestination = nextDestinationOptions[0];
+
+  setOrigin(nextOrigin);
+
+  if (firstDestination) {
+    setDestination(firstDestination);
+  }
+}
+
+function handleDestinationChange(nextDestination: AirportCode) {
+  setDestination(nextDestination);
+}
+
   const [date1, setDate1] = useState(defaultDates.today);
   const [date2, setDate2] = useState(defaultDates.future);
   const [schedules, setSchedules] = useState<ScheduleResult[]>([]);
@@ -115,7 +153,7 @@ export default function SearchPage() {
       <div className="mx-auto max-w-6xl">
         <div className="mb-8">
           <Link href="/" className="text-sm font-medium text-blue-700">
-            ← Back to home
+            Back to home
           </Link>
 
           <h1 className="mt-4 text-4xl font-bold text-slate-900">
@@ -123,15 +161,14 @@ export default function SearchPage() {
           </h1>
 
           <p className="mt-3 max-w-2xl text-slate-600">
-            Search scheduled flights by route and date range. Some routes only
-            operate weekly or a few times per week, so a wider date range may
-            show better results.
+            Select an origin, destination, and date range to find scheduled
+            flights.
           </p>
         </div>
 
         <form
           onSubmit={handleSearch}
-          className="rounded-2xl bg-white p-6 shadow-sm"
+          className="rounded-lg bg-white p-6 shadow-sm"
         >
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             <label className="block">
@@ -140,12 +177,17 @@ export default function SearchPage() {
               </span>
               <select
                 value={origin}
-                onChange={(event) => setOrigin(event.target.value)}
+                onChange={(event) => handleOriginChange(event.target.value as AirportCode)}
                 className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2"
               >
-                {airports.map((airport) => (
+                {/* {airports.map((airport) => (
                   <option key={airport.code} value={airport.code}>
                     {airport.code} - {airport.name}
+                  </option>
+                ))} */}
+                {originOptions.map((code) => (
+                  <option key={code} value={code}>
+                    {getAirportLabel(code)}
                   </option>
                 ))}
               </select>
@@ -157,12 +199,17 @@ export default function SearchPage() {
               </span>
               <select
                 value={destination}
-                onChange={(event) => setDestination(event.target.value)}
+                onChange={(event) => handleDestinationChange(event.target.value as AirportCode)}
                 className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2"
               >
-                {airports.map((airport) => (
+                {/* {airports.map((airport) => (
                   <option key={airport.code} value={airport.code}>
                     {airport.code} - {airport.name}
+                  </option>
+                ))} */}
+                {destinationOptions.map((code) => (
+                  <option key={code} value={code}>
+                    {getAirportLabel(code)}
                   </option>
                 ))}
               </select>
@@ -203,7 +250,7 @@ export default function SearchPage() {
         </form>
 
         {message && (
-          <div className="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-900">
+          <div className="mt-6 rounded-lg border border-amber-200 bg-amber-50 p-4 text-amber-900">
             {message}
           </div>
         )}
@@ -212,7 +259,7 @@ export default function SearchPage() {
           {schedules.map((schedule) => (
             <article
               key={schedule.id}
-              className="rounded-2xl bg-white p-6 shadow-sm"
+              className="rounded-lg bg-white p-6 shadow-sm"
             >
               <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                 <div>
@@ -235,7 +282,7 @@ export default function SearchPage() {
                   </div>
 
                   <p className="mt-2 text-lg font-semibold text-slate-700">
-                    {schedule.origin.code} → {schedule.destination.code}
+                    {schedule.origin.code} to {schedule.destination.code}
                   </p>
 
                   <p className="mt-1 text-slate-600">
@@ -251,7 +298,7 @@ export default function SearchPage() {
                 </div>
               </div>
 
-              <div className="mt-5 grid gap-4 rounded-xl bg-slate-50 p-4 md:grid-cols-3">
+              <div className="mt-5 grid gap-4 rounded-lg bg-slate-50 p-4 md:grid-cols-3">
                 <div>
                   <p className="text-sm font-semibold text-slate-500">
                     Departure

@@ -103,7 +103,7 @@ async function main() {
     .setZone("Pacific/Auckland")
     .startOf("day");
 
-  const endDate = startDate.plus({ days: 120 });
+  const endDate = startDate.plus({ days: 365 });
 
   const allSchedules: ScheduleDocument[] = [];
 

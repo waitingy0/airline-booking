@@ -110,7 +110,7 @@ export default function ScheduleDetailPage() {
   if (isLoading) {
     return (
       <main className="min-h-screen bg-slate-100 px-6 py-10">
-        <div className="mx-auto max-w-4xl rounded-2xl bg-white p-6 shadow-sm">
+        <div className="mx-auto max-w-4xl rounded-lg bg-white p-6 shadow-sm">
           Loading flight details...
         </div>
       </main>
@@ -120,10 +120,10 @@ export default function ScheduleDetailPage() {
   if (!schedule) {
     return (
       <main className="min-h-screen bg-slate-100 px-6 py-10">
-        <div className="mx-auto max-w-4xl rounded-2xl bg-white p-6 shadow-sm">
+        <div className="mx-auto max-w-4xl rounded-lg bg-white p-6 shadow-sm">
           <p className="text-red-700">{message || "Flight not found."}</p>
           <Link href="/search" className="mt-4 inline-block text-blue-700">
-            ← Back to search
+            Back to search
           </Link>
         </div>
       </main>
@@ -134,18 +134,18 @@ export default function ScheduleDetailPage() {
     <main className="min-h-screen bg-slate-100 px-6 py-10">
       <div className="mx-auto max-w-5xl">
         <Link href="/search" className="text-sm font-medium text-blue-700">
-          ← Back to search
+          Back to search
         </Link>
 
-        <section className="mt-5 rounded-2xl bg-white p-6 shadow-sm">
+        <section className="mt-5 rounded-lg bg-white p-6 shadow-sm">
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
-              <h1 className="text-4xl font-bold text-slate-900">
+              <h1 className="text-3xl font-bold text-slate-900">
                 {schedule.flightNo}
               </h1>
 
               <p className="mt-2 text-xl font-semibold text-slate-700">
-                {schedule.origin.code} → {schedule.destination.code}
+                {schedule.origin.code} to {schedule.destination.code}
               </p>
 
               <p className="mt-1 text-slate-600">
@@ -154,14 +154,14 @@ export default function ScheduleDetailPage() {
             </div>
 
             <div className="text-left md:text-right">
-              <p className="text-3xl font-bold text-slate-900">
+              <p className="text-2xl font-bold text-slate-900">
                 NZD ${schedule.price}
               </p>
               <p className="text-sm text-slate-500">per passenger</p>
             </div>
           </div>
 
-          <div className="mt-6 grid gap-4 rounded-xl bg-slate-50 p-5 md:grid-cols-3">
+          <div className="mt-6 grid gap-4 rounded-lg bg-slate-50 p-5 md:grid-cols-3">
             <div>
               <p className="text-sm font-semibold text-slate-500">
                 Departure
@@ -186,7 +186,7 @@ export default function ScheduleDetailPage() {
             </div>
           </div>
 
-          <div className="mt-5 rounded-xl border border-slate-200 p-4">
+          <div className="mt-5 rounded-lg border border-slate-200 p-4">
             <p className="font-semibold text-slate-800">
               Seats available:{" "}
               <span
@@ -200,13 +200,13 @@ export default function ScheduleDetailPage() {
           </div>
         </section>
 
-        <section className="mt-6 rounded-2xl bg-white p-6 shadow-sm">
+        <section className="mt-6 rounded-lg bg-white p-6 shadow-sm">
           <h2 className="text-2xl font-bold text-slate-900">
             Passenger Details
           </h2>
 
           {schedule.isFull ? (
-            <p className="mt-4 rounded-xl bg-red-50 p-4 text-red-700">
+            <p className="mt-4 rounded-lg bg-red-50 p-4 text-red-700">
               This flight is full and cannot accept new bookings.
             </p>
           ) : (
@@ -251,7 +251,7 @@ export default function ScheduleDetailPage() {
               </label>
 
               {message && (
-                <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-900">
+                <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-amber-900">
                   {message}
                 </div>
               )}

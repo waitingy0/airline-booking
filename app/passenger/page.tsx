@@ -73,17 +73,16 @@ export default function PassengerFlightsPage() {
     <main className="min-h-screen bg-slate-100 px-6 py-10">
       <div className="mx-auto max-w-5xl">
         <Link href="/" className="text-sm font-medium text-blue-700">
-          ← Back to home
+          Back to home
         </Link>
 
-        <section className="mt-5 rounded-2xl bg-white p-6 shadow-sm">
-          <h1 className="text-4xl font-bold text-slate-900">
+        <section className="mt-5 rounded-lg bg-white p-6 shadow-sm">
+          <h1 className="text-3xl font-bold text-slate-900">
             Passenger Flights
           </h1>
 
           <p className="mt-3 text-slate-600">
-            Enter a passenger email address to view all bookings associated with
-            that passenger.
+            Enter a passenger email address to show their bookings.
           </p>
 
           <form
@@ -104,12 +103,12 @@ export default function PassengerFlightsPage() {
               disabled={isLoading}
               className="rounded-lg bg-blue-700 px-5 py-3 font-semibold text-white hover:bg-blue-800 disabled:bg-slate-400"
             >
-              {isLoading ? "Searching..." : "Find Flights"}
+              {isLoading ? "Searching..." : "Passenger Flights"}
             </button>
           </form>
 
           {message && (
-            <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-900">
+            <div className="mt-5 rounded-lg border border-amber-200 bg-amber-50 p-4 text-amber-900">
               {message}
             </div>
           )}
@@ -119,7 +118,7 @@ export default function PassengerFlightsPage() {
           {bookings.map((booking) => (
             <article
               key={booking.bookingRef}
-              className="rounded-2xl bg-white p-6 shadow-sm"
+              className="rounded-lg bg-white p-6 shadow-sm"
             >
               <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                 <div>
@@ -132,7 +131,7 @@ export default function PassengerFlightsPage() {
                   </h2>
 
                   <p className="mt-1 text-lg font-semibold text-slate-700">
-                    {booking.schedule.origin.code} →{" "}
+                    {booking.schedule.origin.code} to{" "}
                     {booking.schedule.destination.code}
                   </p>
 
@@ -161,7 +160,7 @@ export default function PassengerFlightsPage() {
                 </div>
               </div>
 
-              <div className="mt-5 grid gap-4 rounded-xl bg-slate-50 p-4 md:grid-cols-3">
+              <div className="mt-5 grid gap-4 rounded-lg bg-slate-50 p-4 md:grid-cols-3">
                 <div>
                   <p className="text-sm font-semibold text-slate-500">
                     Departure
@@ -199,7 +198,8 @@ export default function PassengerFlightsPage() {
                 </Link>
 
                 <Link
-                  href="/manage"
+                  // href="/manage"
+                  href={`/manage?ref=${booking.bookingRef}`}
                   className="rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-800 hover:bg-slate-50"
                 >
                   Manage Booking
