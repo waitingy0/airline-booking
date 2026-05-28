@@ -198,7 +198,6 @@ export default function PassengerFlightsPage() {
                 </Link>
 
                 <Link
-                  // href="/manage"
                   href={`/manage?ref=${booking.bookingRef}`}
                   className="rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-800 hover:bg-slate-50"
                 >
